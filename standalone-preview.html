@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FuncUndo · Version Control for Functions (Fibery Edition)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    /* Fibery Warm Engineering Grid Pattern (Clean Fine Small Scale) */
+    .fibery-grid-pattern {
+      background-color: #FAF7F2;
+      background-image: 
+        linear-gradient(to right, rgba(180, 160, 135, 0.14) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(180, 160, 135, 0.14) 1px, transparent 1px);
+      background-size: 14px 14px;
+    }
+
+    @keyframes smoothLaserSweep {
+      0% { top: 0%; opacity: 0; transform: scaleY(0.5); }
+      10% { opacity: 1; transform: scaleY(1); }
+      85% { top: 100%; opacity: 1; transform: scaleY(1); }
+      100% { top: 100%; opacity: 0; transform: scaleY(0.5); }
+    }
+    .laser-line-fibery {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #e05638 15%, #f7b93e 50%, #e05638 85%, transparent);
+      box-shadow: 0 0 14px rgba(224, 86, 56, 0.9), 0 0 28px rgba(247, 185, 62, 0.6);
+      pointer-events: none;
+      z-index: 30;
+    }
+    .fibery-reticle {
+      position: relative;
+      border: 2px dashed #c15c3d;
+      background: rgba(193, 92, 61, 0.05);
+    }
+    .sticky-note {
+      box-shadow: 3px 5px 15px rgba(0, 0, 0, 0.07);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+  </style>
+</head>
+<body class="fibery-grid-pattern text-[#251D1A] font-sans antialiased selection:bg-[#E05638]/20 selection:text-[#251D1A]">
+
+  <!-- ==================== FIBERY TOP NAVBAR ==================== -->
+  <header class="sticky top-0 z-50 w-full border-b border-[#E8E1D5] bg-[#FAF7F2]/90 backdrop-blur-md">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      
+      <!-- Brand & Quirky Badge -->
+      <div class="flex items-center gap-3">
+        <a href="#" class="flex items-center gap-2.5 group">
+          <div class="w-8 h-8 rounded-lg bg-[#251D1A] text-[#FAF7F2] flex items-center justify-center font-mono font-bold text-sm shadow-sm group-hover:rotate-6 transition-transform">
+            ⚡
+          </div>
+          <span class="font-extrabold text-xl tracking-tight text-[#251D1A]">FuncUndo</span>
+        </a>
+        <span class="text-[11px] font-mono bg-[#EFE9DF] text-[#7A6E65] border border-[#DDD4C5] px-2 py-0.5 rounded-full hidden sm:inline">
+          for refactor-happy nerds
+        </span>
+      </div>
+
+      <!-- Center Links -->
+      <nav class="flex items-center gap-3 sm:gap-6 text-xs font-semibold text-[#5A5047]">
+        <button onclick="switchView('landing')" id="navLandingBtn" class="px-3 py-1.5 rounded-lg bg-[#EFE9DF] text-[#C15C3D] font-bold cursor-pointer">
+          Interactive Scalpel
+        </button>
+        <button onclick="switchView('docs')" id="navDocsBtn" class="px-3 py-1.5 rounded-lg hover:text-[#C15C3D] cursor-pointer flex items-center gap-1.5">
+          <span>Docs</span>
+          <span class="text-[10px] font-mono bg-[#C15C3D]/10 text-[#C15C3D] px-1.5 py-0.2 rounded font-bold">
+            witty
+          </span>
+        </button>
+      </nav>
+
+      <!-- Right CTAs -->
+      <div class="flex items-center gap-3">
+        <a href="https://github.com/ChronosTeamx/FuncUndo" target="_blank" class="text-xs font-semibold text-[#5A5047] hover:text-[#251D1A] hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#DDD4C5] bg-[#FAF7F2] hover:bg-[#F2ECE1] transition-all">
+          <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+          <span>GitHub</span>
+        </a>
+        <button onclick="switchView('docs'); selectDoc('installation-guide');" class="px-4 py-2 rounded-lg bg-[#C15C3D] hover:bg-[#A94B2E] text-white text-xs font-bold tracking-tight shadow-sm transition-all active:scale-95 cursor-pointer">
+          Install Guide
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ==================== LANDING VIEW ==================== -->
+  <div id="landingView">
+    
+    <!-- Hero Section -->
+    <section class="pt-16 pb-12 relative overflow-hidden">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+        
+        <!-- Anti-Hype Pill -->
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EFE9DF] border border-[#DDD4C5] text-xs font-medium text-[#7A6E65] mb-6 shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-[#C15C3D]"></span>
+          <span>Anti-hype software · Zero cloud telemetry · 100% offline SQLite</span>
+        </div>
+
+        <!-- Main Headline -->
+        <h1 class="text-4xl sm:text-6xl font-black text-[#251D1A] tracking-tight leading-[1.1] mb-6">
+          Version control for functions.<br class="hidden sm:inline" />
+          <span class="text-[#C15C3D] underline decoration-wavy decoration-[#C15C3D]/40">
+            Because your entire file didn't deserve to die.
+          </span>
+        </h1>
+
+        <p class="text-base sm:text-xl text-[#5A5047] max-w-2xl mx-auto mb-8 leading-relaxed font-normal">
+          Standard <code class="bg-[#EFE9DF] text-[#C15C3D] px-1.5 py-0.5 rounded font-mono text-sm">Ctrl+Z</code> wipes out everything you touched in the last 30 minutes just to fix one bad line. Git commits are way too heavy for 2 AM scratchpad chaos. FuncUndo gives every function its own private time machine.
+        </p>
+
+        <!-- CTA Buttons & Command -->
+        <div class="flex flex-wrap items-center justify-center gap-3 mb-6">
+          <a href="#playground" class="px-5 py-3 rounded-xl bg-[#C15C3D] hover:bg-[#A94B2E] text-white text-sm font-bold tracking-tight shadow-md hover:shadow-lg transition-all active:scale-95">
+            Rewind a Broken Function 👇
+          </a>
+          <button onclick="navigator.clipboard.writeText('code --install-extension chronos.funcundo'); alert('Copied to clipboard!');" class="px-4 py-3 rounded-xl bg-[#EFE9DF] hover:bg-[#E5DDD0] border border-[#DDD4C5] text-[#251D1A] text-xs font-mono font-medium flex items-center gap-2 transition-all cursor-pointer">
+            <span class="text-[#C15C3D] font-bold">$</span>
+            <span>code --install-extension chronos.funcundo</span>
+            <span class="text-[10px] bg-[#DDD4C5] px-1.5 py-0.5 rounded text-[#5A5047]">copy</span>
+          </button>
+        </div>
+
+        <div class="text-xs text-[#7A6E65] italic">
+          Free & open source under MIT. No signups, no credit cards, no "AI will write your thoughts".
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Playground Section -->
+    <section id="playground" class="py-12 relative">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6">
+
+        <!-- Fibery Sticky Note Overlays -->
+        <div class="relative">
+
+          <!-- Left Sticky Note -->
+          <div class="hidden lg:block absolute -top-8 -left-12 rotate-[-4deg] z-20 sticky-note bg-[#FFF8D6] border border-[#E8DFB3] p-3 rounded-lg text-xs max-w-[210px] text-[#524419] shadow-md">
+            <div class="font-bold mb-0.5">📌 The Friday 4:55 PM bug</div>
+            <div class="text-[11px] leading-tight">Someone broke this function. Standard Ctrl+Z will nuke all the clean code you wrote above and below.</div>
+          </div>
+
+          <!-- Right Sticky Note -->
+          <div class="hidden lg:block absolute -top-6 -right-10 rotate-[3deg] z-20 sticky-note bg-[#E1F3EE] border border-[#BDE0D5] p-3 rounded-lg text-xs max-w-[210px] text-[#1C5C4D] shadow-md">
+            <div class="font-bold mb-0.5">🛡️ Innocent Bystanders</div>
+            <div class="text-[11px] leading-tight">Lines 1-6 & 16-22 are safe. FuncUndo uses AST coordinates so other functions never get touched.</div>
+          </div>
+
+          <!-- The Playground Frame -->
+          <div class="rounded-2xl border-2 border-[#251D1A] bg-[#251D1A] text-[#FAF7F2] shadow-2xl overflow-hidden font-mono text-xs">
+            
+            <!-- Mock VS Code Bar -->
+            <div class="flex items-center justify-between px-4 py-3 bg-[#1A1412] border-b border-[#382C27] select-none text-[11px]">
+              <div class="flex items-center gap-3">
+                <div class="flex gap-1.5">
+                  <span class="w-3 h-3 rounded-full bg-[#E05638] inline-block"></span>
+                  <span class="w-3 h-3 rounded-full bg-[#F7B93E] inline-block"></span>
+                  <span class="w-3 h-3 rounded-full bg-[#4ADE80] inline-block"></span>
+                </div>
+                <span class="text-[#EFE9DF] font-semibold">orderService.ts</span>
+                <span class="text-[#7A6E65]">— [FuncUndo Granular Buffer]</span>
+              </div>
+              
+              <div class="flex items-center gap-3">
+                <span id="blastBadge" class="px-2.5 py-0.5 rounded-full bg-[#1C5C4D] text-[#86EFAC] text-[10px] font-bold border border-[#237864]">
+                  BLAST RADIUS: 0 (SAFE)
+                </span>
+                <span class="text-[#7A6E65] text-[10px] hidden sm:inline">WebAssembly Tree-sitter Worker</span>
+              </div>
+            </div>
+
+            <!-- Code Buffer -->
+            <div class="p-6 sm:p-8 space-y-4 leading-relaxed text-[#D4C8B8]">
+
+              <!-- FUNCTION 1: fetchCart (Untouched) -->
+              <div id="fn1" onclick="focusFunction(1)" class="p-3 rounded-lg border border-transparent hover:border-[#382C27] hover:bg-[#1A1412]/50 transition-all cursor-pointer">
+                <div class="flex items-center justify-between text-[#7A6E65] text-[11px] mb-1">
+                  <span>Lines 1-6 • <strong class="text-[#FAF7F2]">fetchUserCart(userId)</strong></span>
+                  <span class="text-[#86EFAC] bg-[#14261D] px-2 py-0.2 rounded border border-[#237864] text-[10px]">
+                    v1 (Pristine & Untouched)
+                  </span>
+                </div>
+                <pre class="text-[#A39482]"><span class="text-[#F7B93E]">export async function </span><span class="text-[#FAF7F2]">fetchUserCart</span>(<span class="text-[#D4C8B8]">userId</span>: <span class="text-[#E05638]">string</span>) {
+  <span class="text-[#F7B93E]">const </span>cart = <span class="text-[#F7B93E]">await </span>redis.<span class="text-[#FAF7F2]">get</span>(<span class="text-[#86EFAC]">{`\`cart:\${userId}\``}</span>);
+  <span class="text-[#F7B93E]">return </span>cart ? <span class="text-[#E05638]">JSON</span>.<span class="text-[#FAF7F2]">parse</span>(cart) : [];
+}</pre>
+              </div>
+
+              <!-- FUNCTION 2: calculateDiscount (TARGET BROKEN FUNCTION) -->
+              <div id="fn2" onclick="focusFunction(2)" class="p-3.5 rounded-xl fibery-reticle transition-all cursor-pointer relative overflow-hidden bg-[#2C211D]">
+                
+                <!-- Laser Sweep Bar -->
+                <div id="laserLine" class="laser-line-fibery hidden"></div>
+
+                <div class="flex items-center justify-between text-[11px] mb-2 select-none">
+                  <span class="flex items-center gap-2">
+                    <span class="text-[#F7B93E] font-bold">Lines 8-14 • calculateDiscount(price, code)</span>
+                    <span class="text-[10px] bg-[#3B281B] text-[#F7B93E] px-2 py-0.5 rounded border border-[#6B4627] font-bold">
+                      TARGET ACTIVE
+                    </span>
+                  </span>
+                  <span id="targetStatusBadge" class="text-[#FCA5A5] bg-[#3D1A17] px-2 py-0.5 rounded border border-[#7F1D1D] text-[10px] font-bold">
+                    💥 v3 (Broken at 4:55 PM)
+                  </span>
+                </div>
+
+                <div class="relative">
+                  <pre id="codeTarget" class="text-[#FAF7F2] transition-all duration-300"><span class="text-[#F7B93E]">export function </span><span class="text-[#FAF7F2]">calculateDiscount</span>(<span class="text-[#D4C8B8]">price</span>: <span class="text-[#E05638]">number</span>, <span class="text-[#D4C8B8]">code</span>?: <span class="text-[#E05638]">string</span>) {
+  <span class="text-[#7A6E65]">// Refactor rushed before happy hour broke return type contract</span>
+  <span class="text-[#F7B93E]">const </span>multiplier = code ? <span class="text-[#FCA5A5] font-bold">null.getIllegalDiscount()</span> : <span class="text-[#FAF7F2]">0.1</span>;
+  <span class="text-[#F7B93E]">return </span><span class="text-[#FCA5A5] font-bold">{ error: "NaN_CALCULATION", amount: price * multiplier }</span>;
+}</pre>
+                </div>
+
+                <!-- In-Situ Control Pill -->
+                <div class="mt-3 pt-2.5 border-t border-[#3D2C24] flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#A39482] select-none">
+                  <span class="text-[#F7B93E] flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-[#F7B93E] animate-ping"></span>
+                    <span id="instructionText">Press <kbd class="px-1.5 py-0.5 bg-[#1A1412] border border-[#F7B93E]/60 text-[#F7B93E] rounded font-mono font-bold">Ctrl+Alt+Z</kbd> (or Cmd+Alt+Z) to laser-rewind only this function.</span>
+                  </span>
+                  <button onclick="triggerLaserRewind()" class="px-3 py-1 bg-[#C15C3D] hover:bg-[#A94B2E] text-white rounded text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer">
+                    ⚡ Rewind Scalpel
+                  </button>
+                </div>
+              </div>
+
+              <!-- FUNCTION 3: generateInvoice (Untouched) -->
+              <div id="fn3" onclick="focusFunction(3)" class="p-3 rounded-lg border border-transparent hover:border-[#382C27] hover:bg-[#1A1412]/50 transition-all cursor-pointer">
+                <div class="flex items-center justify-between text-[#7A6E65] text-[11px] mb-1">
+                  <span>Lines 16-22 • <strong class="text-[#FAF7F2]">generateInvoice(orderId)</strong></span>
+                  <span class="text-[#86EFAC] bg-[#14261D] px-2 py-0.2 rounded border border-[#237864] text-[10px]">
+                    v1 (Pristine & Untouched)
+                  </span>
+                </div>
+                <pre class="text-[#A39482]"><span class="text-[#F7B93E]">export function </span><span class="text-[#FAF7F2]">generateInvoice</span>(<span class="text-[#D4C8B8]">orderId</span>: <span class="text-[#E05638]">string</span>, <span class="text-[#D4C8B8]">total</span>: <span class="text-[#E05638]">number</span>) {
+  <span class="text-[#F7B93E]">return </span>{ orderId, total, <span class="text-[#D4C8B8]">tax</span>: total * <span class="text-[#FAF7F2]">0.08</span>, <span class="text-[#D4C8B8]">timestamp</span>: <span class="text-[#E05638]">Date</span>.<span class="text-[#FAF7F2]">now</span>() };
+}</pre>
+              </div>
+
+            </div>
+
+            <!-- Sandbox Footer -->
+            <div class="flex items-center justify-between px-6 py-2.5 bg-[#1A1412] border-t border-[#382C27] text-[11px] text-[#7A6E65]">
+              <div class="flex items-center gap-3">
+                <span class="text-[#F7B93E] font-bold">● FuncUndo AST Engine</span>
+                <span>|</span>
+                <span id="timelinePointer">calculateDiscount: [v3 active → v2 snapshot ready]</span>
+              </div>
+              <div>
+                <button onclick="resetSandbox()" class="text-xs text-[#FAF7F2] hover:text-[#F7B93E] underline cursor-pointer">
+                  Break function again
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== VS CODE ACTIVITY BAR SYMBOL SHOWCASE ==================== -->
+    <section class="py-16 border-t border-[#E8E1D5] bg-[#FAF7F2]/60">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6">
+        
+        <div class="text-center max-w-2xl mx-auto mb-8">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FCECE8] border border-[#F4CCC4] text-[11px] font-mono text-[#C15C3D] font-bold mb-3">
+            <span>📍</span>
+            <span>Native VS Code Integration</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-black text-[#251D1A] tracking-tight">
+            Zero Clutter. Anchored Right in Your Left Activity Bar.
+          </h2>
+          <p class="text-xs sm:text-sm text-[#5A5047] mt-2">
+            No floating browser tabs, no cloud dashboards. FuncUndo lives natively inside your VS Code window as a discrete clock-arrow icon on the left sidebar.
+          </p>
+        </div>
+
+        <div class="rounded-2xl border-2 border-[#E8E1D5] bg-white overflow-hidden shadow-sm hover:border-[#C15C3D] transition-all">
+          <div class="p-4 sm:p-5 border-b border-[#E8E1D5] bg-[#FAF7F2] flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <span class="text-xs font-mono font-bold text-[#C15C3D] uppercase tracking-wider">
+                Visual Locator • Activity Bar
+              </span>
+              <h3 class="text-sm sm:text-base font-bold text-[#251D1A]">
+                The FuncUndo Symbol in the VS Code Left Sidebar
+              </h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-mono text-[#1C5C4D] bg-[#E1F3EE] px-2.5 py-0.5 rounded-full font-bold">
+                ● 6th Icon Down
+              </span>
+            </div>
+          </div>
+
+          <div class="p-4 sm:p-6 bg-[#181412] relative overflow-hidden">
+            <div class="relative rounded-xl overflow-hidden border border-[#382C27] bg-[#1E1E1E] shadow-2xl">
+              <!-- Window Bar -->
+              <div class="h-7 bg-[#252526] border-b border-[#333333] px-3 flex items-center justify-between select-none">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#FF5F56] inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#FFBD2E] inline-block"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#27C93F] inline-block"></span>
+                  <span class="ml-2 text-[10px] font-mono text-[#CCCCCC]">Visual Studio Code — funcUndo Workspace</span>
+                </div>
+                <div class="text-[10px] font-mono text-[#858585] hidden sm:block">
+                  Activity Bar • id: chronos.functionExplorer
+                </div>
+              </div>
+
+              <!-- Image with Animated Reticle -->
+              <div class="relative">
+                <img src="vscode-sidebar.png" alt="VS Code left sidebar with FuncUndo clock-arrow symbol highlighted" class="w-full h-auto object-cover" />
+
+                <!-- Reticle over Clock Icon (Y: 176px - 188px, centered at 39.8%) -->
+                <div class="absolute pointer-events-none" style="left: 0.4%; top: 36.8%; width: 2.5%; height: 6.2%; min-width: 24px; min-height: 26px;">
+                  <div class="w-full h-full border-2 border-[#E05638] rounded-md bg-[#E05638]/20 shadow-[0_0_15px_rgba(224,86,56,0.8)] animate-pulse"></div>
+                  <span class="absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 border-[#F7B93E]"></span>
+                  <span class="absolute -top-1 -right-1 w-2 h-2 border-t-2 border-r-2 border-[#F7B93E]"></span>
+                  <span class="absolute -bottom-1 -left-1 w-2 h-2 border-b-2 border-l-2 border-[#F7B93E]"></span>
+                  <span class="absolute -bottom-1 -right-1 w-2 h-2 border-b-2 border-r-2 border-[#F7B93E]"></span>
+                </div>
+
+                <!-- Callout Badge -->
+                <div class="absolute z-20 left-[3.5%] sm:left-[4.5%] top-[35%] flex items-center gap-2">
+                  <svg viewBox="0 0 40 24" fill="none" class="w-8 h-5 text-[#E05638] drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] shrink-0">
+                    <path d="M38 12 L8 12 M14 6 L4 12 L14 18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <div class="bg-[#FAF7F2] text-[#251D1A] border-2 border-[#C15C3D] rounded-xl p-2.5 sm:p-3 shadow-xl max-w-xs sm:max-w-sm">
+                    <div class="flex items-center gap-1.5 mb-1">
+                      <span class="w-2 h-2 rounded-full bg-[#E05638] animate-ping"></span>
+                      <span class="text-[10px] font-mono font-bold text-[#C15C3D] uppercase tracking-wide">
+                        FuncUndo Clock Symbol
+                      </span>
+                    </div>
+                    <div class="text-xs font-bold text-[#251D1A] leading-snug">
+                      Look for the counter-clockwise clock-arrow icon
+                    </div>
+                    <div class="text-[11px] text-[#5A5047] mt-1 leading-tight">
+                      Click this icon in your left sidebar to open the <strong>Tracked Functions</strong> explorer and inspect granular snapshot diffs.
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Specs Footer -->
+          <div class="p-4 sm:p-5 bg-[#FAF7F2] border-t border-[#E8E1D5] grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+            <div class="flex items-start gap-3 p-3 rounded-xl bg-white border border-[#E8E1D5]">
+              <div class="w-9 h-9 rounded-lg bg-[#251D1A] text-[#FAF7F2] flex items-center justify-center shrink-0 border border-[#4A3831] p-1.5">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#F7B93E" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full">
+                  <path d="M3 12a9 9 0 1 0 2.64-6.36L3 8" />
+                  <path d="M3 3v5h5" />
+                  <polyline points="12 7 12 12 15 15" />
+                </svg>
+              </div>
+              <div>
+                <div class="font-bold text-[#251D1A]">Extension Symbol</div>
+                <div class="text-[11px] text-[#7A6E65] font-mono mt-0.5">media/icon.svg (Clock Arrow)</div>
+                <div class="text-[11px] text-[#5A5047] mt-1">Represents AST time-travel and surgical undo.</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3 rounded-xl bg-white border border-[#E8E1D5]">
+              <div class="w-9 h-9 rounded-lg bg-[#E1F3EE] text-[#1C5C4D] flex items-center justify-center shrink-0 font-mono font-bold text-sm border border-[#BDE0D5]">
+                AST
+              </div>
+              <div>
+                <div class="font-bold text-[#251D1A]">Activity Bar Container</div>
+                <div class="text-[11px] text-[#1C5C4D] font-mono mt-0.5">id: "funcundo"</div>
+                <div class="text-[11px] text-[#5A5047] mt-1">Sits quietly alongside Explorer, Search, and Git.</div>
+              </div>
+            </div>
+            <div class="flex items-start gap-3 p-3 rounded-xl bg-white border border-[#E8E1D5]">
+              <div class="w-9 h-9 rounded-lg bg-[#FCECE8] text-[#C15C3D] flex items-center justify-center shrink-0 border border-[#F4CCC4] font-bold text-sm">
+                ✓
+              </div>
+              <div>
+                <div class="font-bold text-[#251D1A]">Function History View</div>
+                <div class="text-[11px] text-[#C15C3D] font-mono mt-0.5">chronos.functionExplorer</div>
+                <div class="text-[11px] text-[#5A5047] mt-1">Inspect function revisions and restore deleted ghosts.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================== FIBERY SHOWCASE SECTION (MODELS & REDDIT QUOTE) ==================== -->
+    <section class="py-16 border-t border-[#E8E1D5]">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+        {/* Modular Cards */}
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-14">
+          <div class="bg-white/80 backdrop-blur-sm p-4 rounded-2xl border-2 border-[#E8E1D5] shadow-sm">
+            <div class="text-[11px] font-mono font-bold text-[#7A6E65] uppercase tracking-wider mb-1">
+              WHEN (Trigger)
+            </div>
+            <div class="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#DDD4C5] text-xs font-mono font-semibold text-[#251D1A] mb-2">
+              <span class="w-2 h-2 rounded-full bg-[#E05638] inline-block mr-1"></span>
+              onDidSaveTextDocument
+            </div>
+            <div class="text-[11px] text-[#7A6E65]">RAM-gated modification registry ignores files with no active changes.</div>
+          </div>
+
+          <div class="bg-white/80 backdrop-blur-sm p-4 rounded-2xl border-2 border-[#E8E1D5] shadow-sm">
+            <div class="text-[11px] font-mono font-bold text-[#7A6E65] uppercase tracking-wider mb-1">
+              THEN (Worker Thread)
+            </div>
+            <div class="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#DDD4C5] text-xs font-mono font-semibold text-[#1C5C4D] mb-2">
+              ⚡ Parse AST with Tree-sitter WASM
+            </div>
+            <div class="text-[11px] text-[#7A6E65]">Background thread computes SHA-256 semantic hashes without freezing your cursor.</div>
+          </div>
+
+          <div class="bg-white/80 backdrop-blur-sm p-4 rounded-2xl border-2 border-[#E8E1D5] shadow-sm">
+            <div class="text-[11px] font-mono font-bold text-[#7A6E65] uppercase tracking-wider mb-1">
+              ACTION (Safety & Store)
+            </div>
+            <div class="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#DDD4C5] text-xs font-mono font-semibold text-[#251D1A] mb-2">
+              💾 Save to local funcundo.sqlite
+            </div>
+            <div class="text-[11px] text-[#7A6E65]">Relational graph tracks caller impact and updates Blast Radius metrics.</div>
+          </div>
+        </div>
+
+        {/* Center Slogan with Isometric Models */}
+        <div class="my-10 py-6 flex flex-col md:flex-row items-center justify-between gap-6">
+          
+          {/* Isometric Building Blocks Model */}
+          <div class="w-36 h-28 shrink-0 hidden sm:block opacity-90">
+            <svg viewBox="0 0 160 120" fill="none" class="w-full h-full drop-shadow-md">
+              <path d="M40 30 L90 10 L130 30 L80 50 Z" fill="#E8DFD0" stroke="#7A6E65" stroke-width="1.5"/>
+              <path d="M40 30 L40 40 L80 60 L80 50 Z" fill="#C2B5A1" stroke="#7A6E65" stroke-width="1.5"/>
+              <path d="M80 50 L80 60 L130 40 L130 30 Z" fill="#998A73" stroke="#7A6E65" stroke-width="1.5"/>
+              <path d="M25 55 L75 35 L115 55 L65 75 Z" fill="#D96E50" stroke="#8A3D27" stroke-width="1.5"/>
+              <path d="M25 55 L25 65 L65 85 L65 75 Z" fill="#B35237" stroke="#8A3D27" stroke-width="1.5"/>
+              <path d="M65 75 L65 85 L115 65 L115 55 Z" fill="#8A3D27" stroke="#8A3D27" stroke-width="1.5"/>
+              <path d="M15 80 L65 60 L105 80 L55 100 Z" fill="#2E2421" stroke="#150E0C" stroke-width="1.5"/>
+              <path d="M15 80 L15 90 L55 110 L55 100 Z" fill="#1C1412" stroke="#150E0C" stroke-width="1.5"/>
+              <path d="M55 100 L55 110 L105 90 L105 80 Z" fill="#0F0908" stroke="#150E0C" stroke-width="1.5"/>
+            </svg>
+            <div class="text-[10px] font-mono text-[#7A6E65] text-center">AST tokens</div>
+          </div>
+
+          <div class="text-center md:text-left flex-1 px-2">
+            <div class="font-serif italic text-base sm:text-lg text-[#C15C3D] mb-1">
+              few keystrokes to learn, infinite files saved from destruction
+            </div>
+            <div class="flex flex-wrap items-center justify-center md:justify-start gap-4">
+              <h2 class="text-3xl sm:text-4xl font-black text-[#251D1A] tracking-tight">
+                Surgical, not complicated
+              </h2>
+              <button onclick="switchView('docs')" class="px-3.5 py-1.5 rounded-full bg-[#251D1A] hover:bg-[#3B2E2A] text-white text-xs font-mono font-semibold transition-all shadow-sm cursor-pointer">
+                Read Why &rarr;
+              </button>
+            </div>
+          </div>
+
+          {/* Isometric Blue Retro Time Machine */}
+          <div class="w-32 h-36 shrink-0 hidden sm:block opacity-90">
+            <svg viewBox="0 0 120 150" fill="none" class="w-full h-full drop-shadow-md">
+              <path d="M60 10 L85 25 L60 35 L35 25 Z" fill="#4B6FA8" stroke="#253E66" stroke-width="1.5"/>
+              <path d="M60 5 L60 10" stroke="#FAF7F2" stroke-width="2"/>
+              <circle cx="60" cy="5" r="2.5" fill="#FAF7F2" stroke="#253E66"/>
+              <path d="M30 28 L60 38 L90 28 L60 18 Z" fill="#3B5A8F" stroke="#253E66" stroke-width="1.5"/>
+              <path d="M30 28 L30 36 L60 46 L60 38 Z" fill="#2D4670" stroke="#253E66" stroke-width="1.5"/>
+              <path d="M60 38 L60 46 L90 36 L90 28 Z" fill="#1E3252" stroke="#253E66" stroke-width="1.5"/>
+              <path d="M30 36 L30 125 L60 135 L60 46 Z" fill="#3B5A8F" stroke="#253E66" stroke-width="1.5"/>
+              <path d="M60 46 L60 135 L90 125 L90 36 Z" fill="#2A4269" stroke="#253E66" stroke-width="1.5"/>
+              <path d="M26 123 L60 138 L94 123 L60 110 Z" fill="#1E3252" stroke="#253E66" stroke-width="1.5"/>
+              <path d="M26 123 L26 130 L60 145 L60 138 Z" fill="#15243B" stroke="#253E66" stroke-width="1.5"/>
+              <path d="M60 138 L60 145 L94 130 L94 123 Z" fill="#0C1726" stroke="#253E66" stroke-width="1.5"/>
+            </svg>
+            <div class="text-[10px] font-mono text-[#4B6FA8] text-center">Chrono box</div>
+          </div>
+
+        </div>
+
+        {/* Reddit & Creator Quote */}
+        <div class="max-w-4xl mx-auto my-8 space-y-4">
+          <div class="relative p-6 sm:p-8 rounded-2xl bg-[#F4EFE6] border-2 border-[#E8E1D5] shadow-sm">
+            <span class="absolute top-2 left-3 text-6xl text-[#DDD4C5] font-serif select-none pointer-events-none">&ldquo;</span>
+            <p class="text-sm sm:text-base text-[#251D1A] leading-relaxed relative z-10 pl-5 pr-5">
+              This seems a lot <strong class="font-bold text-[#C15C3D]">more powerful than standard editor undo</strong>. I'm genuinely surprised something like this isn't built into VS Code by default. Just wondering if I am missing something, like if the developers secretly torture small kittens.
+            </p>
+            <div class="flex items-center justify-end gap-2.5 mt-4 pt-3 border-t border-[#DDD4C5]">
+              <div class="w-6 h-6 rounded-full bg-[#FF4500] text-white flex items-center justify-center font-bold text-xs">r/</div>
+              <div class="text-xs">
+                <span class="font-bold text-[#251D1A]">One senior dev</span> <span class="text-[#7A6E65] italic">on Reddit</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sm:ml-12 p-4 sm:p-5 rounded-2xl bg-[#FFF8EE] border-2 border-[#EADFCF] shadow-sm flex items-start gap-3 max-w-xl">
+            <span class="text-lg">💬</span>
+            <div class="text-xs text-[#5A5047] leading-relaxed">
+              <span class="font-bold text-[#251D1A]">The explanation is simple:</span> we are much better at parsing ASTs in WebAssembly worker threads than at marketing. We just wanted to stop accidentally deleting our own code on Friday evenings.
+              <div class="mt-2 text-[11px] font-bold text-[#C15C3D]">— Chronos Team, Maintainers</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- The 3 Horrors Section -->
+    <section class="py-16 border-t border-[#E8E1D5] bg-[#F4EFE6]">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6">
+        <div class="text-center max-w-2xl mx-auto mb-12">
+          <span class="text-xs font-mono font-bold text-[#C15C3D] tracking-wider uppercase">Relatable Developer Trauma</span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-[#251D1A] tracking-tight mt-1 mb-3">
+            The 3 Horrors of Modern Undoing
+          </h2>
+          <p class="text-sm text-[#5A5047]">We have all been there. Here is how text editors quietly torment engineers.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="p-6 rounded-2xl bg-[#FAF7F2] border-2 border-[#E8E1D5] shadow-sm">
+            <div class="text-3xl mb-3">🚜</div>
+            <h3 class="text-base font-bold text-[#251D1A] mb-2">The Ctrl+Z Steamroller</h3>
+            <p class="text-xs text-[#5A5047] leading-relaxed mb-3">
+              You want to revert a mistake in <code class="font-mono text-[#C15C3D]">parseInput()</code> from 20 minutes ago. It ruthlessly plows through 3 new helper functions you wrote in between.
+            </p>
+            <div class="text-[11px] font-mono text-[#C15C3D] bg-[#FCECE8] p-2 rounded border border-[#F4CCC4]">
+              Collateral damage: 140 lines of innocent code murdered.
+            </div>
+          </div>
+
+          <div class="p-6 rounded-2xl bg-[#FAF7F2] border-2 border-[#E8E1D5] shadow-sm">
+            <div class="text-3xl mb-3">🕳️</div>
+            <h3 class="text-base font-bold text-[#251D1A] mb-2">The Git Stash Black Hole</h3>
+            <p class="text-xs text-[#5A5047] leading-relaxed mb-3">
+              "I'll just git stash this quick test." 4 hours later: CONFLICT in 7 files. Your afternoon is ruined.
+            </p>
+            <div class="text-[11px] font-mono text-[#5A5047] bg-[#EFE9DF] p-2 rounded border border-[#DDD4C5]">
+              Git is for pull requests, not 2-minute scratchpad experiments.
+            </div>
+          </div>
+
+          <div class="p-6 rounded-2xl bg-[#FAF7F2] border-2 border-[#E8E1D5] shadow-sm">
+            <div class="text-3xl mb-3">🧟</div>
+            <h3 class="text-base font-bold text-[#251D1A] mb-2">The Zombie Comment-Out</h3>
+            <p class="text-xs text-[#5A5047] leading-relaxed mb-3">
+              Because you don't trust Ctrl+Z, you copy-paste the old function 5 times: <code class="font-mono text-[#7A6E65]">// old_calculateDiscount_v2_final()</code>. Dead code graveyard.
+            </p>
+            <div class="text-[11px] font-mono text-[#1C5C4D] bg-[#E1F3EE] p-2 rounded border border-[#BDE0D5]">
+              FuncUndo gives every function a true timeline.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ==================== DOCS VIEW ==================== -->
+  <div id="docsView" class="hidden max-w-7xl mx-auto flex min-h-[calc(100vh-4rem)]">
+    
+    <!-- Sidebar -->
+    <aside class="w-64 shrink-0 border-r border-[#E8E1D5] bg-[#F7F3EB] p-4 text-xs font-sans overflow-y-auto max-h-[calc(100vh-4rem)] sticky top-16">
+      
+      {/* Category: Survival Guide */}
+      <div class="mb-5">
+        <div class="text-[#C15C3D] font-extrabold text-xs uppercase tracking-wider mb-2">
+          ⚡ Survival Guide
+        </div>
+        <ul class="space-y-1 pl-2 border-l border-[#DDD4C5]">
+          <li>
+            <button onclick="selectDoc('installation-guide')" id="docBtn-installation-guide" class="w-full text-left px-2.5 py-1.5 rounded transition-all cursor-pointer font-bold bg-[#EFE9DF] text-[#C15C3D] border-l-2 border-[#C15C3D]">
+              ⚡ Installation Guide
+            </button>
+          </li>
+          <li>
+            <button onclick="selectDoc('keybindings')" id="docBtn-keybindings" class="w-full text-left px-2.5 py-1.5 rounded transition-all cursor-pointer text-[#5A5047] hover:text-[#251D1A]">
+              Keybindings (Ctrl+Alt+Z)
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      {/* Category: Philosophical Rants */}
+      <div class="mb-5">
+        <div class="text-[#251D1A] font-extrabold text-xs uppercase tracking-wider mb-2">
+          Philosophical Rants
+        </div>
+        <ul class="space-y-1 pl-2 border-l border-[#DDD4C5]">
+          <li>
+            <button onclick="selectDoc('what-is-funcundo')" id="docBtn-what-is-funcundo" class="w-full text-left px-2.5 py-1.5 rounded transition-all cursor-pointer text-[#5A5047] hover:text-[#251D1A]">
+              What is FuncUndo?
+            </button>
+          </li>
+          <li>
+            <button onclick="selectDoc('vs-the-world')" id="docBtn-vs-the-world" class="w-full text-left px-2.5 py-1.5 rounded transition-all cursor-pointer text-[#5A5047] hover:text-[#251D1A]">
+              FuncUndo vs. Git & The World
+            </button>
+          </li>
+        </ul>
+      </div>
+
+    </aside>
+
+    <!-- Reading Panel -->
+    <main class="flex-1 min-w-0 p-6 sm:p-10 lg:p-12 overflow-y-auto font-sans">
+      
+      {/* ARTICLE: INSTALLATION GUIDE */}
+      <div id="docContent-installation-guide" class="space-y-6">
+        <div class="border-b border-[#E8E1D5] pb-6">
+          <span class="text-xs font-mono font-bold text-[#C15C3D] uppercase tracking-wider">Getting Started</span>
+          <h1 class="text-3xl sm:text-4xl font-black text-[#251D1A] tracking-tight mt-1 mb-3">
+            Installation Guide: How to Equip the Scalpel
+          </h1>
+          <p class="text-base text-[#5A5047] leading-relaxed">
+            Four painless ways to install FuncUndo in under 30 seconds.
+          </p>
+        </div>
+
+        {/* Method 1: GUI */}
+        <div class="p-6 rounded-2xl bg-white border-2 border-[#E8E1D5] shadow-sm space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-[#C15C3D] uppercase tracking-wider">Method 01 (Recommended)</span>
+            <span class="text-[11px] font-mono text-[#7A6E65] bg-[#EFE9DF] px-2 py-0.5 rounded">VS Code GUI</span>
+          </div>
+          <h3 class="text-lg font-bold text-[#251D1A]">Install via Extensions Marketplace</h3>
+          
+          <ol class="list-decimal pl-5 space-y-2 text-xs sm:text-sm text-[#5A5047] leading-relaxed">
+            <li>Launch <strong>Visual Studio Code</strong>.</li>
+            <li>Open Extensions view by clicking the block icon in the left Activity Bar or pressing <kbd class="font-mono bg-[#EFE9DF] border border-[#DDD4C5] px-1.5 py-0.5 rounded font-bold">Ctrl+Shift+X</kbd> (or <kbd class="font-mono bg-[#EFE9DF] border border-[#DDD4C5] px-1.5 py-0.5 rounded font-bold">Cmd+Shift+X</kbd> on macOS).</li>
+            <li>In the search box, type <code class="font-mono font-bold text-[#C15C3D] bg-[#FCECE8] px-1.5 py-0.5 rounded">funcUndo</code>.</li>
+            <li>Look for <strong>FuncUndo</strong> published by <strong>ChronosDev</strong> with the official blue-and-cyan clock symbol.</li>
+            <li>Click the blue <strong>Install</strong> button.</li>
+          </ol>
+
+          {/* Official VS Code Marketplace Screenshot */}
+          <div class="rounded-xl overflow-hidden border border-[#382C27] bg-[#181412] shadow-md">
+            <div class="px-3.5 py-2 bg-[#252526] border-b border-[#333333] flex items-center justify-between text-[11px] font-mono text-[#CCCCCC]">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#86EFAC] inline-block"></span>
+                <span class="font-bold text-[#FAF7F2]">VS Code Marketplace Search Result</span>
+              </div>
+              <span class="text-[10px] text-[#A39482]">Publisher: ChronosDev</span>
+            </div>
+            <div class="p-2 sm:p-3 bg-[#181412]">
+              <img
+                src="vscode-marketplace-funcundo.png"
+                alt="Official FuncUndo Extension in VS Code Marketplace by ChronosDev"
+                class="w-full h-auto rounded-lg border border-[#2D2420] object-cover block"
+              />
+            </div>
+            <div class="px-4 py-2.5 bg-[#1F1917] border-t border-[#2D2420] flex flex-wrap items-center justify-between gap-2 text-xs text-[#A39482]">
+              <span class="flex items-center gap-1.5 text-[#F7B93E]">
+                <span>✓</span>
+                <span>Official Release: <strong>ChronosDev</strong></span>
+              </span>
+              <span class="text-[11px] text-[#86EFAC] font-mono">Semantic version tracking for granular code history</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Method 2: CLI */}
+        <div class="p-6 rounded-2xl bg-white border-2 border-[#E8E1D5] shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-[#1C5C4D] uppercase tracking-wider">Method 02</span>
+            <span class="text-[11px] font-mono text-[#7A6E65] bg-[#EFE9DF] px-2 py-0.5 rounded">Terminal / CLI</span>
+          </div>
+          <h3 class="text-lg font-bold text-[#251D1A]">Run from PowerShell, Bash, or Command Prompt</h3>
+          <div class="p-3.5 rounded-xl bg-[#251D1A] text-[#FAF7F2] font-mono text-xs flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-[#C15C3D] font-bold">$</span>
+              <span class="text-[#86EFAC]">code --install-extension chronos.funcundo</span>
+            </div>
+            <button onclick="navigator.clipboard.writeText('code --install-extension chronos.funcundo'); alert('Copied!');" class="px-2 py-1 rounded bg-[#382C27] text-xs text-[#F7B93E] cursor-pointer">
+              Copy
+            </button>
+          </div>
+        </div>
+
+        {/* Method 3: Quick Open */}
+        <div class="p-6 rounded-2xl bg-white border-2 border-[#E8E1D5] shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-mono font-bold text-[#7A6E65] uppercase tracking-wider">Method 03</span>
+            <span class="text-[11px] font-mono text-[#7A6E65] bg-[#EFE9DF] px-2 py-0.5 rounded">VS Code Quick Open</span>
+          </div>
+          <h3 class="text-lg font-bold text-[#251D1A]">Install via Quick Open Palette</h3>
+          <p class="text-xs text-[#5A5047]">Press <kbd class="font-mono bg-[#EFE9DF] px-1.5 py-0.5 rounded border border-[#DDD4C5]">Ctrl+P</kbd> (or Cmd+P), paste <code class="font-mono text-[#C15C3D]">ext install chronos.funcundo</code>, and hit Enter.</p>
+        </div>
+
+        {/* Visual Indicator: Symbol in VS Code Left Sidebar */}
+        <div class="rounded-2xl border-2 border-[#E8E1D5] bg-white overflow-hidden shadow-sm p-4 sm:p-5 space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-mono font-bold text-[#C15C3D] uppercase tracking-wider">Visual Indicator</span>
+              <h4 class="text-base font-bold text-[#251D1A]">Where to Find FuncUndo in VS Code</h4>
+            </div>
+            <span class="text-[11px] font-mono text-[#1C5C4D] bg-[#E1F3EE] px-2.5 py-0.5 rounded-full font-bold">● Activity Bar Dock</span>
+          </div>
+
+          <div class="relative rounded-xl overflow-hidden border border-[#382C27] bg-[#1E1E1E]">
+            <img src="vscode-sidebar.png" alt="VS Code Activity Bar with FuncUndo symbol" class="w-full h-auto object-cover" />
+            <!-- Reticle highlight over Clock Icon (Y: 176px - 188px, centered at 39.8%) -->
+            <div class="absolute pointer-events-none" style="left: 0.4%; top: 36.8%; width: 2.5%; height: 6.2%; min-width: 24px; min-height: 26px;">
+              <div class="w-full h-full border-2 border-[#E05638] rounded-md bg-[#E05638]/20 shadow-[0_0_15px_rgba(224,86,56,0.8)] animate-pulse"></div>
+            </div>
+            <!-- Arrow Callout -->
+            <div class="absolute z-20 left-[3.5%] sm:left-[4.5%] top-[35%] flex items-center gap-2">
+              <span class="text-[#E05638] font-bold text-lg">◀</span>
+              <div class="bg-[#FAF7F2] text-[#251D1A] border-2 border-[#C15C3D] rounded-xl p-2.5 shadow-xl text-xs max-w-xs">
+                <div class="font-bold text-[#C15C3D]">Look here: Clock Symbol</div>
+                <div class="text-[#5A5047] text-[11px]">Click this clock-arrow symbol to toggle the Tracked Functions history explorer.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Verification */}
+        <div class="p-6 rounded-2xl bg-[#FFF8EE] border-2 border-[#EADFCF] space-y-2 text-xs text-[#5A5047]">
+          <h3 class="text-base font-bold text-[#251D1A]">🎯 Verification: Your First 30 Seconds with FuncUndo</h3>
+          <p>1. Open any <code class="font-mono">.ts</code>, <code class="font-mono">.tsx</code>, or <code class="font-mono">.js</code> file.</p>
+          <p>2. Look at the bottom status bar: you will see <code class="font-mono text-[#C15C3D]">FuncUndo: Ready</code>.</p>
+          <p>3. Edit a function, save, then press <kbd class="font-mono bg-[#EFE9DF] px-1.5 py-0.5 rounded border border-[#DDD4C5]">Ctrl+Alt+Z</kbd> to watch only that function rewind!</p>
+        </div>
+      </div>
+
+      {/* ARTICLE: KEYBINDINGS */}
+      <div id="docContent-keybindings" class="hidden space-y-6">
+        <h1 class="text-3xl font-black text-[#251D1A]">Keybindings & Shortcuts</h1>
+        <p class="text-sm text-[#5A5047]">Press <kbd class="font-mono bg-[#EFE9DF] px-1.5 py-0.5 rounded border border-[#DDD4C5]">Ctrl+Alt+Z</kbd> to undo function enclosing cursor. Press <kbd class="font-mono bg-[#EFE9DF] px-1.5 py-0.5 rounded border border-[#DDD4C5]">Ctrl+Alt+Y</kbd> to redo with QuickPick branch selection.</p>
+      </div>
+
+      {/* ARTICLE: WHAT IS */}
+      <div id="docContent-what-is-funcundo" class="hidden space-y-6">
+        <h1 class="text-3xl font-black text-[#251D1A]">What is FuncUndo?</h1>
+        <p class="text-sm text-[#5A5047]">FuncUndo is Git at the function level. It parses code into ASTs using WebAssembly in background threads, so you can rewind single functions without touching sibling code.</p>
+      </div>
+
+      {/* ARTICLE: VS THE WORLD */}
+      <div id="docContent-vs-the-world" class="hidden space-y-6">
+        <h1 class="text-3xl font-black text-[#251D1A]">FuncUndo vs. The World</h1>
+        <p class="text-sm text-[#5A5047]">Why "just use Git" or "just hit Ctrl+Z" is advice given by people who don't refactor quickly.</p>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="py-12 bg-[#251D1A] text-[#A39482] text-xs font-mono border-t border-[#382C27] mt-12">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+      <div>
+        <div class="text-[#FAF7F2] font-bold text-sm mb-1">⚡ FuncUndo <span class="text-[10px] text-[#F7B93E]">v0.1.6</span></div>
+        <div>Built with SQLite, WebAssembly, and unreasonable amounts of caffeine by Chronos Team. MIT Licensed.</div>
+      </div>
+      <div class="flex items-center gap-6 text-[#FAF7F2] font-semibold">
+        <button onclick="switchView('landing')" class="hover:text-[#F7B93E] cursor-pointer">Interactive Scalpel</button>
+        <button onclick="switchView('docs')" class="hover:text-[#F7B93E] cursor-pointer">Sarcastic Docs</button>
+        <a href="https://github.com/ChronosTeamx/FuncUndo" target="_blank" class="hover:text-[#F7B93E]">GitHub Repo</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==================== INTERACTION SCRIPT ==================== -->
+  <script>
+    let version = 3;
+    let selected = 2;
+
+    const brokenHTML = `<span class="text-[#F7B93E]">export function </span><span class="text-[#FAF7F2]">calculateDiscount</span>(<span class="text-[#D4C8B8]">price</span>: <span class="text-[#E05638]">number</span>, <span class="text-[#D4C8B8]">code</span>?: <span class="text-[#E05638]">string</span>) {
+  <span class="text-[#7A6E65]">// Refactor rushed before happy hour broke return type contract</span>
+  <span class="text-[#F7B93E]">const </span>multiplier = code ? <span class="text-[#FCA5A5] font-bold">null.getIllegalDiscount()</span> : <span class="text-[#FAF7F2]">0.1</span>;
+  <span class="text-[#F7B93E]">return </span><span class="text-[#FCA5A5] font-bold">{ error: "NaN_CALCULATION", amount: price * multiplier }</span>;
+}`;
+
+    const cleanHTML = `<span class="text-[#F7B93E]">export function </span><span class="text-[#FAF7F2]">calculateDiscount</span>(<span class="text-[#D4C8B8]">price</span>: <span class="text-[#E05638]">number</span>, <span class="text-[#D4C8B8]">code</span>?: <span class="text-[#E05638]">string</span>): <span class="text-[#E05638]">string</span> {
+  <span class="text-[#F7B93E]">const </span>discount = code ? <span class="text-[#FAF7F2]">0.85</span> : <span class="text-[#FAF7F2]">1.0</span>;
+  <span class="text-[#F7B93E]">const </span>total = price * discount;
+  <span class="text-[#F7B93E]">return </span><span class="text-[#86EFAC]">\`$\${total.toFixed(2)}\`</span>;
+}`;
+
+    function switchView(view) {
+      const landing = document.getElementById('landingView');
+      const docs = document.getElementById('docsView');
+      const navLanding = document.getElementById('navLandingBtn');
+      const navDocs = document.getElementById('navDocsBtn');
+
+      if (view === 'docs') {
+        landing.classList.add('hidden');
+        docs.classList.remove('hidden');
+        navDocs.classList.add('bg-[#EFE9DF]', 'text-[#C15C3D]', 'font-bold');
+        navLanding.classList.remove('bg-[#EFE9DF]', 'text-[#C15C3D]', 'font-bold');
+      } else {
+        docs.classList.add('hidden');
+        landing.classList.remove('hidden');
+        navLanding.classList.add('bg-[#EFE9DF]', 'text-[#C15C3D]', 'font-bold');
+        navDocs.classList.remove('bg-[#EFE9DF]', 'text-[#C15C3D]', 'font-bold');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function selectDoc(docId) {
+      ['installation-guide', 'keybindings', 'what-is-funcundo', 'vs-the-world'].forEach(id => {
+        const el = document.getElementById('docContent-' + id);
+        const btn = document.getElementById('docBtn-' + id);
+        if (el) el.classList.add('hidden');
+        if (btn) btn.className = 'w-full text-left px-2.5 py-1.5 rounded transition-all cursor-pointer text-[#5A5047] hover:text-[#251D1A]';
+      });
+
+      const target = document.getElementById('docContent-' + docId);
+      const activeBtn = document.getElementById('docBtn-' + docId);
+      if (target) target.classList.remove('hidden');
+      if (activeBtn) activeBtn.className = 'w-full text-left px-2.5 py-1.5 rounded transition-all cursor-pointer font-bold bg-[#EFE9DF] text-[#C15C3D] border-l-2 border-[#C15C3D]';
+    }
+
+    function focusFunction(num) {
+      selected = num;
+      const fn1 = document.getElementById('fn1');
+      const fn2 = document.getElementById('fn2');
+      const fn3 = document.getElementById('fn3');
+      [fn1, fn2, fn3].forEach(f => f.classList.remove('fibery-reticle'));
+
+      const target = num === 1 ? fn1 : num === 2 ? fn2 : fn3;
+      target.classList.add('fibery-reticle');
+    }
+
+    window.addEventListener('keydown', (e) => {
+      const isZ = e.key === 'z' || e.key === 'Z' || e.code === 'KeyZ';
+      const isUndoCombo = (e.ctrlKey || e.metaKey) && e.altKey && isZ;
+      if (isUndoCombo) {
+        e.preventDefault();
+        triggerLaserRewind();
+      }
+    });
+
+    function triggerLaserRewind() {
+      if (selected !== 2) {
+        alert("Click into calculateDiscount() first to test function undoing!");
+        return;
+      }
+      if (version === 2) {
+        alert("Already rewound to v2 (Clean)! Click 'Break function again' to reset.");
+        return;
+      }
+
+      const beam = document.getElementById('laserLine');
+      const target = document.getElementById('codeTarget');
+      const badge = document.getElementById('targetStatusBadge');
+      const blast = document.getElementById('blastBadge');
+      const instruction = document.getElementById('instructionText');
+
+      beam.classList.remove('hidden');
+      beam.style.animation = 'smoothLaserSweep 0.55s cubic-bezier(0.22, 1, 0.36, 1) forwards';
+
+      target.style.opacity = '0.05';
+      setTimeout(() => {
+        target.innerHTML = cleanHTML;
+        target.style.opacity = '1';
+      }, 280);
+
+      setTimeout(() => {
+        beam.classList.add('hidden');
+        beam.style.animation = '';
+        version = 2;
+        badge.className = "text-[#86EFAC] bg-[#14261D] px-2 py-0.5 rounded border border-[#237864] text-[10px] font-bold";
+        badge.innerText = "● v2 (Clean & Restored)";
+        blast.className = "px-2.5 py-0.5 rounded-full bg-[#1C5C4D] text-[#86EFAC] text-[10px] font-bold border border-[#237864]";
+        blast.innerText = "BLAST RADIUS: 0 (SAFE) — 0 CALLERS BROKEN";
+        instruction.innerHTML = `<span class="text-[#86EFAC]">Phew! Lines 8-14 rewound. Surrounding code remained 100% frozen.</span>`;
+      }, 600);
+    }
+
+    function resetSandbox() {
+      version = 3;
+      const target = document.getElementById('codeTarget');
+      const badge = document.getElementById('targetStatusBadge');
+      const blast = document.getElementById('blastBadge');
+      const instruction = document.getElementById('instructionText');
+
+      target.innerHTML = brokenHTML;
+      badge.className = "text-[#FCA5A5] bg-[#3D1A17] px-2 py-0.5 rounded border border-[#7F1D1D] text-[10px] font-bold";
+      badge.innerText = "💥 v3 (Broken at 4:55 PM)";
+      blast.className = "px-2.5 py-0.5 rounded-full bg-[#1C5C4D] text-[#86EFAC] text-[10px] font-bold border border-[#237864]";
+      blast.innerText = "BLAST RADIUS: 0 (SAFE)";
+      instruction.innerHTML = `Press <kbd class="px-1.5 py-0.5 bg-[#1A1412] border border-[#F7B93E]/60 text-[#F7B93E] rounded font-mono font-bold">Ctrl+Alt+Z</kbd> (or Cmd+Alt+Z) to laser-rewind only this function.`;
+      focusFunction(2);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Fibery Warm Engineering Grid Pattern (Clean Fine Small Scale) */
+.fibery-grid-pattern {
+  background-color: #FAF7F2;
+  background-image: 
+    linear-gradient(to right, rgba(180, 160, 135, 0.14) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(180, 160, 135, 0.14) 1px, transparent 1px);
+  background-size: 14px 14px;
+}
+
+@keyframes smoothLaserSweep {
+  0% {
+    top: 0%;
+    opacity: 0;
+    transform: scaleY(0.5);
+  }
+  10% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  85% {
+    top: 100%;
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+    transform: scaleY(0.5);
+  }
+}
+
+.laser-line-fibery {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #e05638 15%, #f7b93e 50%, #e05638 85%, transparent);
+  box-shadow: 0 0 14px rgba(224, 86, 56, 0.9), 0 0 28px rgba(247, 185, 62, 0.6);
+  pointer-events: none;
+  z-index: 30;
+}
+
+.fibery-reticle {
+  position: relative;
+  border: 2px dashed #c15c3d;
+  background: rgba(193, 92, 61, 0.05);
+}
+
+.sticky-note {
+  box-shadow: 3px 5px 15px rgba(0, 0, 0, 0.07);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* Subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #faf7f2;
+}
+::-webkit-scrollbar-thumb {
+  background: #ddd4c5;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c2b5a1;
+}
