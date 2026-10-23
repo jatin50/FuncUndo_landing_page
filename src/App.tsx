@@ -83,7 +83,7 @@ export function App() {
                 }}
                 className="px-6 py-3 rounded-xl bg-[#251D1A] hover:bg-[#3B2E2A] text-white text-xs font-mono font-bold tracking-tight shadow-md transition-all active:scale-95 cursor-pointer inline-flex items-center gap-2"
               >
-                <span>Read the Sarcastic Docs</span>
+                <span>Read the  Docs</span>
                 <span>&rarr;</span>
               </button>
             </div>
