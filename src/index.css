@@ -2,13 +2,14 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Fibery Warm Engineering Grid Pattern (Clean Fine Small Scale) */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* Warm Parchment Background (Clean, No Grid) */
 .fibery-grid-pattern {
   background-color: #FAF7F2;
-  background-image: 
-    linear-gradient(to right, rgba(180, 160, 135, 0.14) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(180, 160, 135, 0.14) 1px, transparent 1px);
-  background-size: 14px 14px;
 }
 
 @keyframes smoothLaserSweep {

@@ -138,18 +138,18 @@ export const SidebarSymbolCallout: React.FC<SidebarSymbolCalloutProps> = ({
                   </svg>
 
                   {/* Annotation Note Card */}
-                  <div className="bg-[#FAF7F2] text-[#251D1A] border-2 border-[#C15C3D] rounded-xl p-2.5 sm:p-3 shadow-xl max-w-xs sm:max-w-sm">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span className="w-2 h-2 rounded-full bg-[#E05638] animate-ping"></span>
-                      <span className="text-[10px] font-mono font-bold text-[#C15C3D] uppercase tracking-wide">
+                  <div className="bg-[#FAF7F2] text-[#251D1A] border-2 border-[#C15C3D] rounded-xl p-2 sm:p-3 shadow-xl max-w-[200px] sm:max-w-xs text-[11px] sm:text-xs">
+                    <div className="flex items-center gap-1.5 mb-0.5 sm:mb-1">
+                      <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#E05638] animate-ping shrink-0"></span>
+                      <span className="text-[9px] sm:text-[10px] font-mono font-bold text-[#C15C3D] uppercase tracking-wide truncate">
                         FuncUndo Clock Symbol
                       </span>
                     </div>
-                    <div className="text-xs font-bold text-[#251D1A] leading-snug">
-                      Look for the counter-clockwise clock-arrow icon
+                    <div className="font-bold text-[#251D1A] leading-snug text-[11px] sm:text-xs">
+                      Counter-clockwise clock-arrow
                     </div>
-                    <div className="text-[11px] text-[#5A5047] mt-1 leading-tight">
-                      Click this icon in your left sidebar to open the <strong>Tracked Functions</strong> explorer and inspect granular snapshot diffs.
+                    <div className="text-[10px] sm:text-[11px] text-[#5A5047] mt-0.5 sm:mt-1 leading-tight hidden xs:block">
+                      Click in your left sidebar to open <strong>Tracked Functions</strong>.
                     </div>
                   </div>
                 </div>

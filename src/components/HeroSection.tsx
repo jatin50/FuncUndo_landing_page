@@ -47,11 +47,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenDocs }) => {
           
           <button
             onClick={copyInstallCmd}
-            className="px-4 py-3 rounded-xl bg-[#EFE9DF] hover:bg-[#E5DDD0] border border-[#DDD4C5] text-[#251D1A] text-xs font-mono font-medium flex items-center gap-2 transition-all cursor-pointer"
+            className="px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-[#EFE9DF] hover:bg-[#E5DDD0] border border-[#DDD4C5] text-[#251D1A] text-xs font-mono font-medium flex items-center gap-2 transition-all cursor-pointer max-w-full"
           >
-            <span className="text-[#C15C3D] font-bold">$</span>
-            <span>code --install-extension chronos.funcundo</span>
-            <span className="text-[10px] bg-[#DDD4C5] px-1.5 py-0.5 rounded text-[#5A5047] flex items-center gap-1">
+            <span className="text-[#C15C3D] font-bold shrink-0">$</span>
+            <span className="truncate">code --install-extension chronos.funcundo</span>
+            <span className="text-[10px] bg-[#DDD4C5] px-1.5 py-0.5 rounded text-[#5A5047] flex items-center gap-1 shrink-0">
               {copied ? <Check className="w-3 h-3 text-green-700" /> : <Copy className="w-3 h-3" />}
               {copied ? 'copied!' : 'copy'}
             </span>

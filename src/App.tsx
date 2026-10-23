@@ -12,7 +12,7 @@ export function App() {
   const [currentView, setCurrentView] = useState<'landing' | 'docs'>('landing');
 
   return (
-    <div className="min-h-screen fibery-grid-pattern text-[#251D1A] font-sans antialiased selection:bg-[#E05638]/20 selection:text-[#251D1A]">
+    <div className="min-h-screen bg-[#FAF7F2] text-[#251D1A] font-sans antialiased selection:bg-[#E05638]/20 selection:text-[#251D1A] overflow-x-hidden">
       
       {/* Top Navbar */}
       <Navbar

@@ -200,7 +200,43 @@ export const DocsView: React.FC = () => {
       </aside>
 
       {/* ==================== CENTER DOCUMENTATION READING PANEL ==================== */}
-      <main className="flex-1 min-w-0 p-6 sm:p-10 lg:p-12 overflow-y-auto font-sans">
+      <main className="flex-1 min-w-0 p-4 sm:p-10 lg:p-12 overflow-y-auto font-sans">
+        
+        {/* Mobile Topic Selector (Visible on < md) */}
+        <div className="md:hidden mb-6 p-3 rounded-xl bg-[#F7F3EB] border border-[#DDD4C5]">
+          <label htmlFor="mobile-doc-select" className="block text-[10px] font-mono font-bold text-[#7A6E65] uppercase mb-1.5">
+            Select Documentation Topic:
+          </label>
+          <select
+            id="mobile-doc-select"
+            value={activeDoc}
+            onChange={(e) => {
+              setActiveDoc(e.target.value);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="w-full p-2.5 rounded-lg bg-white border border-[#DDD4C5] text-xs font-semibold text-[#251D1A] focus:outline-none focus:border-[#C15C3D]"
+          >
+            <optgroup label="Getting Started">
+              <option value="installation-guide">⚡ Installation Guide</option>
+              <option value="keybindings">Keyboard Shortcuts & Commands</option>
+            </optgroup>
+            <optgroup label="Philosophical Rants">
+              <option value="vs-the-world">FuncUndo vs. Git & The World</option>
+              <option value="what-is-funcundo">What is FuncUndo?</option>
+              <option value="why-funcundo">Why FuncUndo?</option>
+              <option value="the-scalpel-manifesto">The Scalpel Manifesto</option>
+            </optgroup>
+            <optgroup label="The Nerd Engine">
+              <option value="tree-sitter-wasm">Tree-sitter WASM Worker</option>
+              <option value="relational-blast-radius">Relational Blast Radius Graph</option>
+              <option value="sqlite-wasm-storage">SQLite WASM (Zero Cloud)</option>
+            </optgroup>
+            <optgroup label="Survival Guide">
+              <option value="function-resurrection">Resurrecting Deleted Ghosts</option>
+              <option value="vacuum-settings">Retention & Vacuum Settings</option>
+            </optgroup>
+          </select>
+        </div>
         
         {/* ==================== ARTICLE 1: WHAT IS FUNCUNDO? ==================== */}
         {activeDoc === 'what-is-funcundo' && (

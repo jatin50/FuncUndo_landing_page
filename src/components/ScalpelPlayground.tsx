@@ -79,33 +79,33 @@ export const ScalpelPlayground: React.FC = () => {
           <div className="rounded-2xl border-2 border-[#251D1A] bg-[#251D1A] text-[#FAF7F2] shadow-2xl overflow-hidden font-mono text-xs">
             
             {/* Mock VS Code Bar */}
-            <div className="flex items-center justify-between px-4 py-3 bg-[#1A1412] border-b border-[#382C27] select-none text-[11px]">
-              <div className="flex items-center gap-3">
-                <div className="flex gap-1.5">
-                  <span className="w-3 h-3 rounded-full bg-[#E05638] inline-block"></span>
-                  <span className="w-3 h-3 rounded-full bg-[#F7B93E] inline-block"></span>
-                  <span className="w-3 h-3 rounded-full bg-[#4ADE80] inline-block"></span>
+            <div className="flex flex-wrap items-center justify-between gap-2 px-3 sm:px-4 py-2.5 sm:py-3 bg-[#1A1412] border-b border-[#382C27] select-none text-[10px] sm:text-[11px]">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex gap-1.5 shrink-0">
+                  <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#E05638] inline-block"></span>
+                  <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#F7B93E] inline-block"></span>
+                  <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-[#4ADE80] inline-block"></span>
                 </div>
                 <span className="text-[#EFE9DF] font-semibold">orderService.ts</span>
-                <span className="text-[#7A6E65]">— [FuncUndo Granular Buffer]</span>
+                <span className="text-[#7A6E65] hidden sm:inline">— [FuncUndo Granular Buffer]</span>
               </div>
               
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 <span
-                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border transition-colors ${
+                  className={`px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-bold border transition-colors ${
                     currentVersion === 2
                       ? 'bg-[#1C5C4D] text-[#86EFAC] border-[#237864]'
                       : 'bg-[#2A201A] text-[#F7B93E] border-[#5A3E26]'
                   }`}
                 >
-                  {currentVersion === 2 ? 'BLAST RADIUS: 0 (SAFE) — 0 CALLERS BROKEN' : 'BLAST RADIUS: 0 (SAFE)'}
+                  {currentVersion === 2 ? 'SAFE (0 CALLERS BROKEN)' : 'SAFE (0 CALLERS)'}
                 </span>
-                <span className="text-[#7A6E65] text-[10px] hidden sm:inline">WebAssembly Tree-sitter Worker</span>
+                <span className="text-[#7A6E65] text-[10px] hidden md:inline">WebAssembly Tree-sitter Worker</span>
               </div>
             </div>
 
             {/* Code Buffer */}
-            <div className="p-6 sm:p-8 space-y-4 leading-relaxed text-[#D4C8B8]">
+            <div className="p-4 sm:p-8 space-y-4 leading-relaxed text-[#D4C8B8]">
 
               {/* FUNCTION 1: fetchCart (Untouched) */}
               <div
@@ -114,13 +114,13 @@ export const ScalpelPlayground: React.FC = () => {
                   selectedFunction === 1 ? 'fibery-reticle' : 'border-transparent hover:border-[#382C27] hover:bg-[#1A1412]/50'
                 }`}
               >
-                <div className="flex items-center justify-between text-[#7A6E65] text-[11px] mb-1">
+                <div className="flex flex-wrap items-center justify-between gap-1 text-[#7A6E65] text-[10px] sm:text-[11px] mb-1">
                   <span>Lines 1-6 • <strong className="text-[#FAF7F2]">fetchUserCart(userId)</strong></span>
-                  <span className="text-[#86EFAC] bg-[#14261D] px-2 py-0.2 rounded border border-[#237864] text-[10px]">
+                  <span className="text-[#86EFAC] bg-[#14261D] px-2 py-0.2 rounded border border-[#237864] text-[9px] sm:text-[10px]">
                     v1 (Pristine & Untouched)
                   </span>
                 </div>
-                <pre className="text-[#A39482]">
+                <pre className="overflow-x-auto text-[#A39482]">
                   <span className="text-[#F7B93E]">export async function </span>
                   <span className="text-[#FAF7F2]">fetchUserCart</span>(
                   <span className="text-[#D4C8B8]">userId</span>: <span className="text-[#E05638]">string</span>) {'{\n'}
@@ -168,7 +168,7 @@ export const ScalpelPlayground: React.FC = () => {
 
                 <div className="relative">
                   <pre
-                    className={`text-[#FAF7F2] transition-all duration-300 ${
+                    className={`overflow-x-auto text-[#FAF7F2] transition-all duration-300 ${
                       isLaserActive ? 'opacity-10 blur-[1.5px] translate-y-0.5' : 'opacity-100 blur-0 translate-y-0'
                     }`}
                   >
@@ -235,7 +235,7 @@ export const ScalpelPlayground: React.FC = () => {
                     v1 (Pristine & Untouched)
                   </span>
                 </div>
-                <pre className="text-[#A39482]">
+                <pre className="overflow-x-auto text-[#A39482]">
                   <span className="text-[#F7B93E]">export function </span>
                   <span className="text-[#FAF7F2]">generateInvoice</span>(
                   <span className="text-[#D4C8B8]">orderId</span>: <span className="text-[#E05638]">string</span>, <span className="text-[#D4C8B8]">total</span>: <span className="text-[#E05638]">number</span>) {'{\n'}
@@ -250,11 +250,11 @@ export const ScalpelPlayground: React.FC = () => {
             </div>
 
             {/* Sandbox Footer */}
-            <div className="flex items-center justify-between px-6 py-2.5 bg-[#1A1412] border-t border-[#382C27] text-[11px] text-[#7A6E65]">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center justify-between gap-2 px-4 sm:px-6 py-2.5 bg-[#1A1412] border-t border-[#382C27] text-[10px] sm:text-[11px] text-[#7A6E65]">
+              <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                 <span className="text-[#F7B93E] font-bold">● FuncUndo AST Engine</span>
-                <span>|</span>
-                <span>
+                <span className="hidden sm:inline">|</span>
+                <span className="truncate max-w-[240px] sm:max-w-none">
                   {selectedFunction === 2
                     ? `calculateDiscount: [${currentVersion === 3 ? 'v3 active → v2 snapshot ready' : 'v2 restored (Pristine)'}]`
                     : selectedFunction === 1

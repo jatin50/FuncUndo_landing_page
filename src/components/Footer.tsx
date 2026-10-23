@@ -21,7 +21,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDocs, onOpenPlayground }) 
           </div>
         </div>
 
-        <div className="flex items-center gap-6 text-[#FAF7F2] text-xs font-sans font-semibold">
+        <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 sm:gap-6 text-[#FAF7F2] text-xs font-sans font-semibold">
           <button
             onClick={onOpenPlayground}
             className="hover:text-[#F7B93E] transition-colors cursor-pointer"
