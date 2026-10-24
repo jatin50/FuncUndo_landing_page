@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { BookOpen, Sparkles, Menu, X, Check, Copy } from 'lucide-react';
 
 interface NavbarProps {
-  currentView: 'landing' | 'docs';
-  onSelectView: (view: 'landing' | 'docs') => void;
+  currentView: 'landing' | 'docs' | 'privacy' | '404';
+  onSelectView: (view: 'landing' | 'docs' | 'privacy' | '404') => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ currentView, onSelectView }) => {
@@ -100,19 +100,19 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onSelectView }) => 
             <span>GitHub</span>
           </a>
 
-          {currentView === 'docs' ? (
-            <button
-              onClick={() => onSelectView('landing')}
-              className="px-3 py-1.5 rounded-lg bg-[#C15C3D] hover:bg-[#A94B2E] text-white text-xs font-bold tracking-tight shadow-sm transition-all active:scale-95 cursor-pointer"
-            >
-              Back to Home
-            </button>
-          ) : (
+          {currentView === 'landing' ? (
             <button
               onClick={() => onSelectView('docs')}
               className="px-3.5 py-1.5 rounded-lg bg-[#C15C3D] hover:bg-[#A94B2E] text-white text-xs font-bold tracking-tight shadow-sm transition-all active:scale-95 cursor-pointer"
             >
               Open Docs
+            </button>
+          ) : (
+            <button
+              onClick={() => onSelectView('landing')}
+              className="px-3 py-1.5 rounded-lg bg-[#C15C3D] hover:bg-[#A94B2E] text-white text-xs font-bold tracking-tight shadow-sm transition-all active:scale-95 cursor-pointer"
+            >
+              Back to Home
             </button>
           )}
         </div>
@@ -131,19 +131,19 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onSelectView }) => 
             </svg>
           </a>
 
-          {currentView === 'docs' ? (
-            <button
-              onClick={() => onSelectView('landing')}
-              className="px-2.5 py-1 rounded-lg bg-[#251D1A] text-white text-xs font-bold"
-            >
-              Home
-            </button>
-          ) : (
+          {currentView === 'landing' ? (
             <button
               onClick={() => onSelectView('docs')}
               className="px-2.5 py-1 rounded-lg bg-[#C15C3D] text-white text-xs font-bold shadow-sm"
             >
               Docs
+            </button>
+          ) : (
+            <button
+              onClick={() => onSelectView('landing')}
+              className="px-2.5 py-1 rounded-lg bg-[#251D1A] text-white text-xs font-bold"
+            >
+              Home
             </button>
           )}
 
@@ -204,6 +204,17 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onSelectView }) => 
             className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-[#5A5047] hover:bg-[#EFE9DF]"
           >
             <span>The 3 Horrors of Undoing</span>
+          </button>
+
+          <button
+            onClick={() => {
+              onSelectView('privacy');
+              setMobileMenuOpen(false);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-[#5A5047] hover:bg-[#EFE9DF]"
+          >
+            <span>Privacy Policy (Zero Telemetry)</span>
           </button>
 
           {/* Quick copy install snippet inside mobile menu */}
