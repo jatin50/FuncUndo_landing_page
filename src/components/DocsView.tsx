@@ -71,6 +71,7 @@ export const DocsView: React.FC<DocsViewProps> = ({ onSelectHome, initialDoc }) 
   const [openRants, setOpenRants] = useState(true);
   const [openEngine, setOpenEngine] = useState(true);
   const [openGuide, setOpenGuide] = useState(true);
+  const [copiedCli, setCopiedCli] = useState(false);
 
   useEffect(() => {
     const meta = docMeta[activeDoc] || {
@@ -721,11 +722,12 @@ export const DocsView: React.FC<DocsViewProps> = ({ onSelectHome, initialDoc }) 
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText('code --install-extension chronos.funcundo');
-                    alert('Copied to clipboard!');
+                    setCopiedCli(true);
+                    setTimeout(() => setCopiedCli(false), 2000);
                   }}
-                  className="px-2 py-1 rounded bg-[#382C27] hover:bg-[#4A3831] text-xs text-[#F7B93E] font-sans font-semibold transition-all cursor-pointer"
+                  className="px-2.5 py-1 rounded bg-[#382C27] hover:bg-[#4A3831] text-xs text-[#F7B93E] font-sans font-semibold transition-all cursor-pointer"
                 >
-                  Copy
+                  {copiedCli ? 'Copied!' : 'Copy'}
                 </button>
               </div>
             </div>

@@ -10,10 +10,14 @@ export const Navbar: React.FC<NavbarProps> = ({ currentView, onSelectView }) => 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const copyInstallCmd = () => {
-    navigator.clipboard.writeText('code --install-extension chronos.funcundo');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const copyInstallCmd = async () => {
+    try {
+      await navigator.clipboard.writeText('code --install-extension chronos.funcundo');
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
   };
 
   return (

@@ -8,10 +8,15 @@ interface HeroSectionProps {
 export const HeroSection: React.FC<HeroSectionProps> = ({ onOpenDocs }) => {
   const [copied, setCopied] = useState(false);
 
-  const copyInstallCmd = () => {
-    navigator.clipboard.writeText('code --install-extension chronos.funcundo');
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  const copyInstallCmd = async () => {
+    try {
+      await navigator.clipboard.writeText('code --install-extension chronos.funcundo');
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Fallback
+      setCopied(false);
+    }
   };
 
   return (

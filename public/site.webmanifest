@@ -1,0 +1,25 @@
+{
+  "short_name": "FuncUndo",
+  "name": "FuncUndo · Version Control for Functions",
+  "description": "Granular, AST-aware function-level version control and relational blast-radius safety engine for Visual Studio Code.",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#FAF7F2",
+  "theme_color": "#FAF7F2",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "categories": ["developer-tools", "productivity", "utilities"]
+}

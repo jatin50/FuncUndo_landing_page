@@ -20,7 +20,7 @@ function getInitialView(): ViewType {
   if (path.startsWith('/docs')) return 'docs';
   if (path.startsWith('/privacy')) return 'privacy';
   if (path === '/404') return '404';
-  return 'landing';
+  return '404';
 }
 
 export function App() {
