@@ -2,10 +2,119 @@
 <html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FuncUndo · Version Control for Functions (Because your file didn't deserve to die)</title>
-    <meta name="description" content="Granular, AST-aware function-level version control and caller blast-radius analysis for Visual Studio Code." />
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>FuncUndo · Version Control for Functions (VS Code Extension)</title>
+    <meta name="title" content="FuncUndo · Version Control for Functions (VS Code Extension)" />
+    <meta name="description" content="Granular, AST-aware function-level version control and relational blast-radius safety engine for Visual Studio Code. 100% offline SQLite with zero cloud telemetry." />
+    <meta name="keywords" content="FuncUndo, VS Code extension, function undo, AST version control, tree-sitter, developer tools, code history, offline sqlite wasm, refactoring tool" />
+    <meta name="author" content="ChronosDev" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://funcundo.vercel.app/" id="canonical-link" />
+
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://funcundo.vercel.app/" />
+    <meta property="og:title" content="FuncUndo · Version Control for Functions" />
+    <meta property="og:description" content="Stop letting standard Ctrl+Z obliterate your entire file. Surgical, AST-aware function rewind and caller blast-radius analysis for VS Code. 100% offline." />
+    <meta property="og:image" content="https://funcundo.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="FuncUndo - Version Control for Functions VS Code Extension Banner" />
+    <meta property="og:site_name" content="FuncUndo" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X Cards -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://funcundo.vercel.app/" />
+    <meta name="twitter:title" content="FuncUndo · Version Control for Functions" />
+    <meta name="twitter:description" content="Stop letting standard Ctrl+Z obliterate your entire file. Surgical, AST-aware function rewind for VS Code." />
+    <meta name="twitter:image" content="https://funcundo.vercel.app/og-image.png" />
+    <meta name="twitter:creator" content="@ChronosDev" />
+
+    <!-- Google Search Console Verification Placeholder -->
+    <!-- Replace content with your Google Search Console token when adding site to GSC -->
+    <meta name="google-site-verification" content="GSC_VERIFICATION_TOKEN_PLACEHOLDER" />
+
+    <!-- Favicon & Mobile Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icon.png" />
+    <meta name="theme-color" content="#FAF7F2" />
+    <meta name="apple-mobile-web-app-title" content="FuncUndo" />
+    <meta name="application-name" content="FuncUndo" />
+
+    <!-- Schema.org Structured Data (JSON-LD) for SoftwareApplication & Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://funcundo.vercel.app/#software",
+          "name": "FuncUndo",
+          "operatingSystem": "Visual Studio Code (Windows, macOS, Linux)",
+          "applicationCategory": "DeveloperApplication",
+          "description": "Granular, AST-aware function-level version control and relational blast-radius safety engine for Visual Studio Code.",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "author": {
+            "@type": "Organization",
+            "name": "ChronosDev",
+            "url": "https://github.com/ChronosTeamx/FuncUndo"
+          },
+          "screenshot": "https://funcundo.vercel.app/vscode-sidebar.png",
+          "softwareVersion": "0.1.6",
+          "downloadUrl": "https://marketplace.visualstudio.com/items?itemName=chronos.funcundo"
+        },
+        {
+          "@type": "Organization",
+          "@id": "https://funcundo.vercel.app/#organization",
+          "name": "ChronosDev",
+          "url": "https://funcundo.vercel.app/",
+          "logo": "https://funcundo.vercel.app/icon.png",
+          "sameAs": [
+            "https://github.com/ChronosTeamx/FuncUndo"
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://funcundo.vercel.app/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is FuncUndo?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "FuncUndo is a Visual Studio Code extension that provides granular, function-level version control. It tracks AST character boundaries so you can rewind individual functions without touching surrounding code."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does FuncUndo send my code to the cloud?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. FuncUndo is 100% offline. All AST parsing runs in background WebAssembly worker threads, and snapshots are stored locally in an embedded SQLite database on your computer with zero telemetry."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do I install FuncUndo in VS Code?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You can install FuncUndo directly from the VS Code Extensions Marketplace (search 'FuncUndo' by ChronosDev) or run 'code --install-extension chronos.funcundo' in your terminal."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body class="bg-[#FAF7F2] text-[#251D1A]">
     <div id="root"></div>

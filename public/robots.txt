@@ -1,0 +1,9 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Host
+Host: https://funcundo.vercel.app
+
+# Sitemaps
+Sitemap: https://funcundo.vercel.app/sitemap.xml
