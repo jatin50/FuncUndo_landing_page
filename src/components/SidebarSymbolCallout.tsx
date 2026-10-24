@@ -83,7 +83,11 @@ export const SidebarSymbolCallout: React.FC<SidebarSymbolCalloutProps> = ({
             >
               <img
                 src="/vscode-sidebar.png"
-                alt="Visual Studio Code left sidebar with FuncUndo clock-arrow symbol highlighted"
+                alt="Visual Studio Code left Activity Bar interface highlighting the FuncUndo counter-clockwise clock-arrow symbol"
+                loading="lazy"
+                decoding="async"
+                width={1024}
+                height={457}
                 className="w-full h-auto object-cover block"
               />
 

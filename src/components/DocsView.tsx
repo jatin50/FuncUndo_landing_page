@@ -1,12 +1,89 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { SidebarSymbolCallout } from './SidebarSymbolCallout';
+import { updateSEO } from '../utils/seo';
 
-export const DocsView: React.FC = () => {
-  const [activeDoc, setActiveDoc] = useState<string>('vs-the-world');
+interface DocsViewProps {
+  onSelectHome?: () => void;
+  initialDoc?: string;
+}
+
+const docMeta: Record<string, { title: string; desc: string; category: string }> = {
+  'installation-guide': {
+    title: 'Installation Guide & Quickstart',
+    desc: 'How to install the FuncUndo extension in VS Code via Marketplace GUI or terminal CLI.',
+    category: 'Getting Started',
+  },
+  'keybindings': {
+    title: 'Keyboard Shortcuts (Ctrl+Alt+Z)',
+    desc: 'Complete keyboard cheat sheet for surgical undo, redo, and branch jumping.',
+    category: 'Getting Started',
+  },
+  'what-is-funcundo': {
+    title: 'What is FuncUndo?',
+    desc: 'An opinionated VS Code extension that provides granular, function-level version control.',
+    category: 'Philosophical Rants',
+  },
+  'why-funcundo': {
+    title: 'Why FuncUndo? (The Anti-Steamroller Manifesto)',
+    desc: 'Why file-level undo fails modern developers and why functions deserve private history.',
+    category: 'Philosophical Rants',
+  },
+  'vs-the-world': {
+    title: 'FuncUndo vs. Git, Local History & The World',
+    desc: 'In-depth comparison of FuncUndo against Git commits, Git stash, and IDE local history.',
+    category: 'Philosophical Rants',
+  },
+  'the-scalpel-manifesto': {
+    title: 'The Scalpel Manifesto',
+    desc: 'Why sledgehammer undos destroy cursor focus, linting state, and brother functions.',
+    category: 'Philosophical Rants',
+  },
+  'tree-sitter-wasm': {
+    title: 'WebAssembly Tree-sitter Worker Architecture',
+    desc: 'Parsing ASTs at 60 FPS in dedicated worker threads without lagging the editor cursor.',
+    category: 'The Nerd Engine',
+  },
+  'relational-blast-radius': {
+    title: 'Relational Blast Radius Safety Graph',
+    desc: 'How FuncUndo flags caller impact across files before you break return contracts.',
+    category: 'The Nerd Engine',
+  },
+  'sqlite-wasm-storage': {
+    title: 'Embedded SQLite WASM: Zero Cloud, 100% Offline',
+    desc: 'Technical details of client-side sql.js storage and zero telemetry architecture.',
+    category: 'The Nerd Engine',
+  },
+  'function-resurrection': {
+    title: 'Resurrecting Deleted Ghosts',
+    desc: 'How to detect and restore deleted functions referenced by newer code.',
+    category: 'Survival Guide',
+  },
+  'vacuum-settings': {
+    title: 'Retention & Vacuum Settings',
+    desc: 'Configure storage thresholds, auto-vacuum cadence, and snapshot pruning.',
+    category: 'Survival Guide',
+  },
+};
+
+export const DocsView: React.FC<DocsViewProps> = ({ onSelectHome, initialDoc }) => {
+  const [activeDoc, setActiveDoc] = useState<string>(initialDoc || 'vs-the-world');
   const [openRants, setOpenRants] = useState(true);
   const [openEngine, setOpenEngine] = useState(true);
   const [openGuide, setOpenGuide] = useState(true);
+
+  useEffect(() => {
+    const meta = docMeta[activeDoc] || {
+      title: 'Documentation',
+      desc: 'Technical and conceptual guide to FuncUndo VS Code extension.',
+      category: 'Docs',
+    };
+    updateSEO({
+      title: `${meta.title} · FuncUndo Docs`,
+      description: meta.desc,
+      canonicalPath: `/docs`,
+    });
+  }, [activeDoc]);
 
   return (
     <div className="max-w-7xl mx-auto flex min-h-[calc(100vh-4rem)]">
@@ -202,6 +279,38 @@ export const DocsView: React.FC = () => {
       {/* ==================== CENTER DOCUMENTATION READING PANEL ==================== */}
       <main className="flex-1 min-w-0 p-4 sm:p-10 lg:p-12 overflow-y-auto font-sans">
         
+        {/* Breadcrumb Navigation with Schema.org Microdata */}
+        <nav aria-label="Breadcrumb" className="mb-6 text-xs font-mono text-[#7A6E65] flex items-center gap-1.5 flex-wrap">
+          <ol className="flex items-center gap-1.5 list-none p-0 m-0 flex-wrap" itemScope itemType="https://schema.org/BreadcrumbList">
+            <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem" className="flex items-center gap-1.5">
+              <button
+                onClick={onSelectHome}
+                itemProp="item"
+                className="hover:text-[#C15C3D] hover:underline cursor-pointer"
+              >
+                <span itemProp="name">Home</span>
+              </button>
+              <meta itemProp="position" content="1" />
+              <span>/</span>
+            </li>
+            <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem" className="flex items-center gap-1.5">
+              <span itemProp="name" className="text-[#251D1A]">Docs</span>
+              <meta itemProp="position" content="2" />
+              <span>/</span>
+            </li>
+            <li className="flex items-center gap-1.5">
+              <span className="text-[#7A6E65]">{docMeta[activeDoc]?.category || 'General'}</span>
+              <span>/</span>
+            </li>
+            <li itemProp="itemListElement" itemScope itemType="https://schema.org/ListItem">
+              <span itemProp="name" className="text-[#C15C3D] font-bold">
+                {docMeta[activeDoc]?.title || activeDoc}
+              </span>
+              <meta itemProp="position" content="3" />
+            </li>
+          </ol>
+        </nav>
+
         {/* Mobile Topic Selector (Visible on < md) */}
         <div className="md:hidden mb-6 p-3 rounded-xl bg-[#F7F3EB] border border-[#DDD4C5]">
           <label htmlFor="mobile-doc-select" className="block text-[10px] font-mono font-bold text-[#7A6E65] uppercase mb-1.5">
@@ -576,7 +685,11 @@ export const DocsView: React.FC = () => {
                 <div className="p-2 sm:p-3 bg-[#181412]">
                   <img
                     src="/vscode-marketplace-funcundo.png"
-                    alt="Official FuncUndo Extension in VS Code Marketplace by ChronosDev"
+                    alt="Official FuncUndo Extension in Visual Studio Code Extensions Marketplace published by ChronosDev"
+                    loading="lazy"
+                    decoding="async"
+                    width={807}
+                    height={216}
                     className="w-full h-auto rounded-lg border border-[#2D2420] object-cover block"
                   />
                 </div>
